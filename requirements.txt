@@ -1,0 +1,13 @@
+flask
+PyJWT
+datetime
+Flask-SQLAlchemy
+python-dotenv
+mysqlclient
+wheel
+requests
+tensorflow
+scikit-learn
+numpy
+pandas
+opencv-python
