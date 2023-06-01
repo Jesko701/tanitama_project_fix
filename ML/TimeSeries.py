@@ -3,11 +3,8 @@ import pandas as pd
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 from flask import jsonify
-from cachetools import cached, TTLCache
 import functools
 import os
-
-cache = TTLCache(maxsize=128, ttl=300)  # Cache with maximum size of 128 entries and a time-to-live of 300 seconds
 
 class TimeSeries():
     # 1 time load all model
