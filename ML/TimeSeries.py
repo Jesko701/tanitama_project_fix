@@ -3,22 +3,37 @@ import pandas as pd
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 from flask import jsonify
+from cachetools import cached, TTLCache
+import functools
 import os
 
-class TimeSeries():
-    def predictBeras(self):
-        model_folder = "ML/static"
-        model_filename = "1.h5"
-        model_path = os.path.join(model_folder, model_filename)
-        model = tf.keras.models.load_model(model_path)
-        
-        #Load Data
-        data_folder = "ML/data"
-        data_name = "DataBaru_HargaPangan.csv"
-        df = pd.read_csv(os.path.join(data_folder,data_name))
+cache = TTLCache(maxsize=128, ttl=300)  # Cache with maximum size of 128 entries and a time-to-live of 300 seconds
 
+class TimeSeries():
+    # 1 time load all model
+    model_folder = "ML/static"
+    model_filename_1 = "1.h5"
+    model_filename_2 = "2.h5"
+    model_filename_3 = "3.h5"
+    model_filename_4 = "4.h5"
+    model_path_1 = os.path.join(model_folder, model_filename_1)
+    model_path_2 = os.path.join(model_folder, model_filename_2)
+    model_path_3 = os.path.join(model_folder, model_filename_3)
+    model_path_4 = os.path.join(model_folder, model_filename_4)
+    model_1 = tf.keras.models.load_model(model_path_1)
+    model_2 = tf.keras.models.load_model(model_path_2)
+    model_3 = tf.keras.models.load_model(model_path_3)
+    model_4 = tf.keras.models.load_model(model_path_4)
+
+
+    # Load data CSV
+    data_folder = "ML/data"
+    data_name = "DataBaru_HargaPangan.csv"
+    df = pd.read_csv(os.path.join(data_folder,data_name))
+    @functools.lru_cache(maxsize=128)
+    def predictBeras(self):
         #Filter Data as 'Beras' only
-        data_filter = df.filter(['Beras'])
+        data_filter = self.df.filter(['Beras'])
         data = data_filter.values
         data = np.array(data)
 
@@ -36,7 +51,7 @@ class TimeSeries():
         result_data = np.reshape(result_data, (result_data.shape[0], result_data.shape[1], 1))
 
         #Make predictions
-        predict = model.predict(result_data)
+        predict = self.model_1.predict(result_data)
         unscaled_predict = scaler.inverse_transform(predict)
 
         #Return as JSON\
@@ -44,19 +59,10 @@ class TimeSeries():
         response = {'Beras': seperate_data_beras}
         return jsonify(response)
 
+    @functools.lru_cache(maxsize=128)
     def predictBawangMerah(self):
-        model_folder = "ML/static"
-        model_filename = "2.h5"
-        model_path = os.path.join(model_folder, model_filename)
-        model = tf.keras.models.load_model(model_path)
-
-        #Load Data
-        data_folder = "ML/data"
-        data_name = "DataBaru_HargaPangan.csv"
-        df = pd.read_csv(os.path.join(data_folder,data_name))
-
         #Filter Data as 'Beras' only
-        data_filter = df.filter(['Bawang Merah'])
+        data_filter = self.df.filter(['Bawang Merah'])
         data = data_filter.values
         data = np.array(data)
 
@@ -74,7 +80,7 @@ class TimeSeries():
         result_data = np.reshape(result_data, (result_data.shape[0], result_data.shape[1], 1))
 
         #Make predictions
-        predict = model.predict(result_data)
+        predict = self.model_2.predict(result_data)
         unscaled_predict = scaler.inverse_transform(predict)
 
         #Return as JSON
@@ -82,19 +88,10 @@ class TimeSeries():
         response = {'Bawang Merah': data_one_dimension}
         return jsonify(response)
 
+    @functools.lru_cache(maxsize=128)
     def predictBawangPutih(self):
-        model_folder = "ML/static"
-        model_filename = "3.h5"
-        model_path = os.path.join(model_folder, model_filename)
-        model = tf.keras.models.load_model(model_path)
-
-        #Load Data
-        data_folder = "ML/data"
-        data_name = "DataBaru_HargaPangan.csv"
-        df = pd.read_csv(os.path.join(data_folder,data_name))
-
         #Filter Data as 'Beras' only
-        data_filter = df.filter(['Bawang Putih'])
+        data_filter = self.df.filter(['Bawang Putih'])
         data = data_filter.values
         data = np.array(data)
 
@@ -112,7 +109,7 @@ class TimeSeries():
         result_data = np.reshape(result_data, (result_data.shape[0], result_data.shape[1], 1))
 
         #Make predictions
-        predict = model.predict(result_data)
+        predict = self.model_3.predict(result_data)
         unscaled_predict = scaler.inverse_transform(predict)
 
         #Return as JSON
@@ -120,19 +117,10 @@ class TimeSeries():
         response = {'Bawang Putih': data_one_dimension}
         return jsonify(response)
 
+    @functools.lru_cache(maxsize=128)
     def predictCabaiMerah(self):
-        model_folder = "ML/static"
-        model_filename = "4.h5"
-        model_path = os.path.join(model_folder, model_filename)
-        model = tf.keras.models.load_model(model_path)
-
-        #Load Data
-        data_folder = "ML/data"
-        data_name = "DataBaru_HargaPangan.csv"
-        df = pd.read_csv(os.path.join(data_folder,data_name))
-
         #Filter Data as 'Beras' only
-        data_filter = df.filter(['Cabai Merah'])
+        data_filter = self.df.filter(['Cabai Merah'])
         data = data_filter.values
         data = np.array(data)
 
@@ -150,7 +138,7 @@ class TimeSeries():
         result_data = np.reshape(result_data, (result_data.shape[0], result_data.shape[1], 1))
 
         #Make predictions
-        predict = model.predict(result_data)
+        predict = self.model_4.predict(result_data)
         unscaled_predict = scaler.inverse_transform(predict)
 
         #Return as JSON

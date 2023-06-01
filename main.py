@@ -6,8 +6,9 @@ from controller.UserController import UserController  # * with Class
 from controller.Authorization import required_token  # * no Class
 from ML.TimeSeries import TimeSeries
 import requests
-
 import os
+
+
 load_dotenv()
 
 app = Flask(__name__)
