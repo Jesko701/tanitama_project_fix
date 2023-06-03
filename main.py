@@ -102,7 +102,7 @@ def predictBawangPutih():
 @cache.cached(timeout=None)
 def classification():
     try:
-        image_text = request.form.get('text')
+        image_text = request.form.get('text-image')
         return klasifikasi.predict_img(image_text)
     except Exception as e:
         return jsonify(message = str(e))
