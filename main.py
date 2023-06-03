@@ -2,10 +2,12 @@
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from database.UserModel import init_app
-from controller.UserController import UserController  # * with Class
+from controller.UserController import UserController  # * with Class 
 from controller.Authorization import required_token  # * no Class
 from ML.TimeSeries import TimeSeries
+from ML.Classification import Classification
 import requests
+from flask_caching import Cache
 import os
 
 
@@ -14,10 +16,12 @@ load_dotenv()
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('database_uri')
 app.config['SECRET_KEY'] = os.getenv("secret_key")
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 init_app(app)
 user_controller = UserController()
 time_series = TimeSeries()
+klasifikasi = Classification()
 
 @app.route('/', methods=['GET'])
 def helloWL():
@@ -25,12 +29,14 @@ def helloWL():
 
 @app.route('/users', methods=['GET'])
 @required_token
+@cache.cached(timeout=None)
 def get_all_users():
     return user_controller.getAll()
 
 
 @app.route('/profile', methods=['GET'])
 @required_token
+@cache.cached(timeout=None)
 def getUser():
     header = request.headers.get('Authorization')
     token = None
@@ -41,6 +47,7 @@ def getUser():
 
 @app.route('/weather', methods=['GET'])
 @required_token
+@cache.cached(timeout=None)
 def weatherAPI():
     try:
         longitude = request.args.get('longitude')
@@ -54,6 +61,7 @@ def weatherAPI():
 
 
 @app.route('/users', methods=['POST'])
+@cache.cached(timeout=None)
 def create_user():
     username = request.json['username']
     email = request.json['email']
@@ -63,6 +71,7 @@ def create_user():
 
 
 @app.route('/login', methods=['POST'])
+@cache.cached(timeout=None)
 def login():
     username = request.json['username']
     pw = request.json['password']
@@ -70,20 +79,34 @@ def login():
 
 
 @app.route('/predictBeras',methods=['GET'])
+@cache.cached(timeout=None)
 def predictBeras():
     return time_series.predictBeras()
 
 @app.route('/predictCabaiMerah', methods=['GET'])
+@cache.cached(timeout=None)
 def predictCabaiMerah():
     return time_series.predictCabaiMerah()
 
 @app.route('/predictBawangMerah',methods=['GET'])
+@cache.cached(timeout=None)
 def predictBawangMerah():
     return time_series.predictBawangMerah()
 
 @app.route('/predictBawangPutih',methods=['GET'])
+@cache.cached(timeout=None)
 def predictBawangPutih():
     return time_series.predictBawangPutih()
+
+@app.route('/classification', methods=['POST'])
+@cache.cached(timeout=None)
+def classification():
+    try:
+        image_text = request.form.get('text')
+        return klasifikasi.predict_img(image_text)
+    except Exception as e:
+        return jsonify(message = str(e))
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port='8000', debug='True')

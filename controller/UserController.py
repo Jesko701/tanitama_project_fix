@@ -5,12 +5,13 @@ from controller.Authorization import add_token_to_header
 from dotenv import load_dotenv
 import os
 import re
+import functools
 
 load_dotenv()
 user_jwt = JWT(os.getenv('secret_key'))
 
-
 class UserController():
+    @functools.lru_cache()
     def createUser(self, username, email, password, confirmPass):
         username = username
         email = email
@@ -38,6 +39,7 @@ class UserController():
         return jsonify(message="Berhasil membuat data", data=Data), 201
 
     # For the Admin
+    @functools.lru_cache()
     def getAll(self):
         data = UserModel.query.all()
         custom_data = []
@@ -50,6 +52,7 @@ class UserController():
             custom_data.append(user_data)
         return jsonify(message="Berhasil mengambil seluruh users", data=custom_data), 200
 
+    @functools.lru_cache()
     def loginUser(self, username, password):
         try:  # Test for SSL features
             user = UserModel.query.filter_by(username=username).first()
@@ -68,6 +71,7 @@ class UserController():
         except ImportError:
             return jsonify({"message": "Username tidak ditemukan"}), 404
 
+    @functools.lru_cache()
     def payloadUser(self, token):
         try:
             data = user_jwt.decode_token(token)
@@ -76,6 +80,7 @@ class UserController():
             return jsonify({"message": "Token salah"}), 400
 
     # For the Admin
+    @functools.lru_cache()
     def updateUser(self, id, username=None, email=None):
         user = UserModel.query.filter_by(id=id).first()
         if user is None:
@@ -94,7 +99,7 @@ class UserController():
 
                 return jsonify(message="User berhasil diupdate", data=data_format), 200
     # For the Admin
-
+    @functools.lru_cache()
     def deleteUser(self, id):
         user = UserModel.query.filter_by(id=id).first()
         if user is None:

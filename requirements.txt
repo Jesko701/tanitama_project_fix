@@ -1,6 +1,5 @@
 flask
 PyJWT
-datetime
 Flask-SQLAlchemy
 python-dotenv
 mysqlclient
@@ -11,3 +10,5 @@ scikit-learn
 numpy
 pandas
 opencv-python
+Flask-Caching
+Pillow
