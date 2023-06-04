@@ -77,6 +77,11 @@ def login():
     pw = request.json['password']
     return user_controller.loginUser(username=username, password=pw)
 
+@app.route('/logoutPerson', methods=['POST'])
+@cache.cached(timeout=None)
+@required_token
+def logout():
+    return user_controller.logout()
 
 @app.route('/predictBeras',methods=['GET'])
 @cache.cached(timeout=None)

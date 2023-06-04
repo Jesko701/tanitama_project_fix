@@ -111,4 +111,10 @@ class UserController():
 
         db.session.delete(user)
         db.session.commit()
-        return jsonify(message="User berhasil dihapus", data=data_format), 200
+        return jsonify(message="User berhasil dihapus", data=data_format), 200\
+        
+    @functools.lru_cache()
+    def logout(self):
+        response = jsonify(message = "Berhasil Logout")
+        response.headers.remove('Authorization')
+        return response
