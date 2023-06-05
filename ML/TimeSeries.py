@@ -6,6 +6,7 @@ from flask import jsonify
 import functools
 import os
 
+
 class TimeSeries():
     # 1 time load all model
     model_folder = "ML/static"
@@ -22,123 +23,133 @@ class TimeSeries():
     model_3 = tf.keras.models.load_model(model_path_3)
     model_4 = tf.keras.models.load_model(model_path_4)
 
-
     # Load data CSV
     data_folder = "ML/data"
     data_name = "DataBaru_HargaPangan.csv"
-    df = pd.read_csv(os.path.join(data_folder,data_name))
+    df = pd.read_csv(os.path.join(data_folder, data_name))
+
+    def __init__(self):
+        self.dataBeras = self.predictBeras()
+        self.dataCabaiMerah = self.predictCabaiMerah()
+        self.dataBawangMerah = self.predictBawangMerah()
+        self.dataBawangPutih = self.predictBawangPutih()
+
+    @functools.lru_cache(maxsize=128)
+    def predict(self):
+        return jsonify(message="Berhasil mengambil data", data={"Beras": self.dataBeras, "Cabai Merah": self.dataCabaiMerah, "Bawang Merah": self.dataBawangMerah, "Bawang Putih": self.dataBawangPutih}), 200
+
     @functools.lru_cache(maxsize=128)
     def predictBeras(self):
-        #Filter Data as 'Beras' only
+        # Filter Data as 'Beras' only
         data_filter = self.df.filter(['Beras'])
         data = data_filter.values
         data = np.array(data)
 
-        #Normalize
+        # Normalize
         scaler = MinMaxScaler(feature_range=(0, 1))
         scaled_value = scaler.fit_transform(data)
 
-        #Reshaping process
+        # Reshaping process
         seq_legth = 3
         result_data = []
         for i in range(seq_legth, len(scaled_value)):
             result_data.append(scaled_value[i - seq_legth:i, 0])
 
         result_data = np.array(result_data)
-        result_data = np.reshape(result_data, (result_data.shape[0], result_data.shape[1], 1))
+        result_data = np.reshape(
+            result_data, (result_data.shape[0], result_data.shape[1], 1))
 
-        #Make predictions
+        # Make predictions
         predict = self.model_1.predict(result_data)
         unscaled_predict = scaler.inverse_transform(predict)
 
-        #Return as JSON\
+        # Return as JSON\
         seperate_data_beras = unscaled_predict.flatten().tolist()
-        response = {'Beras': seperate_data_beras}
-        return jsonify(response)
+        return seperate_data_beras
 
     @functools.lru_cache(maxsize=128)
     def predictBawangMerah(self):
-        #Filter Data as 'Beras' only
+        # Filter Data as 'Beras' only
         data_filter = self.df.filter(['Bawang Merah'])
         data = data_filter.values
         data = np.array(data)
 
-        #Normalize
+        # Normalize
         scaler = MinMaxScaler(feature_range=(0, 1))
         scaled_value = scaler.fit_transform(data)
 
-        #Reshaping process
+        # Reshaping process
         seq_legth = 3
         result_data = []
         for i in range(seq_legth, len(scaled_value)):
             result_data.append(scaled_value[i - seq_legth:i, 0])
 
         result_data = np.array(result_data)
-        result_data = np.reshape(result_data, (result_data.shape[0], result_data.shape[1], 1))
+        result_data = np.reshape(
+            result_data, (result_data.shape[0], result_data.shape[1], 1))
 
-        #Make predictions
+        # Make predictions
         predict = self.model_2.predict(result_data)
         unscaled_predict = scaler.inverse_transform(predict)
 
-        #Return as JSON
+        # Return as JSON
         data_one_dimension = unscaled_predict.flatten().tolist()
-        response = {'Bawang Merah': data_one_dimension}
-        return jsonify(response)
+        return data_one_dimension
 
     @functools.lru_cache(maxsize=128)
     def predictBawangPutih(self):
-        #Filter Data as 'Beras' only
+        # Filter Data as 'Beras' only
         data_filter = self.df.filter(['Bawang Putih'])
         data = data_filter.values
         data = np.array(data)
 
-        #Normalize
+        # Normalize
         scaler = MinMaxScaler(feature_range=(0, 1))
         scaled_value = scaler.fit_transform(data)
 
-        #Reshaping process
+        # Reshaping process
         seq_legth = 3
         result_data = []
         for i in range(seq_legth, len(scaled_value)):
             result_data.append(scaled_value[i - seq_legth:i, 0])
 
         result_data = np.array(result_data)
-        result_data = np.reshape(result_data, (result_data.shape[0], result_data.shape[1], 1))
+        result_data = np.reshape(
+            result_data, (result_data.shape[0], result_data.shape[1], 1))
 
-        #Make predictions
+        # Make predictions
         predict = self.model_3.predict(result_data)
         unscaled_predict = scaler.inverse_transform(predict)
 
-        #Return as JSON
+        # Return as JSON
         data_one_dimension = unscaled_predict.flatten().tolist()
-        response = {'Bawang Putih': data_one_dimension}
-        return jsonify(response)
+        return data_one_dimension
 
     @functools.lru_cache(maxsize=128)
     def predictCabaiMerah(self):
-        #Filter Data as 'Beras' only
+        # Filter Data as 'Beras' only
         data_filter = self.df.filter(['Cabai Merah'])
         data = data_filter.values
         data = np.array(data)
 
-        #Normalize
+        # Normalize
         scaler = MinMaxScaler(feature_range=(0, 1))
         scaled_value = scaler.fit_transform(data)
 
-        #Reshaping process
+        # Reshaping process
         seq_legth = 3
         result_data = []
         for i in range(seq_legth, len(scaled_value)):
             result_data.append(scaled_value[i - seq_legth:i, 0])
 
         result_data = np.array(result_data)
-        result_data = np.reshape(result_data, (result_data.shape[0], result_data.shape[1], 1))
+        result_data = np.reshape(
+            result_data, (result_data.shape[0], result_data.shape[1], 1))
 
-        #Make predictions
+        # Make predictions
         predict = self.model_4.predict(result_data)
         unscaled_predict = scaler.inverse_transform(predict)
 
-        #Return as JSON
+        # Return as JSON
         data_one_dimension = unscaled_predict.flatten().tolist()
-        response = {'Cabai Merah': data_one_dimension}
-        return jsonify(response)
+        return data_one_dimension

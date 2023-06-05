@@ -83,25 +83,10 @@ def login():
 def logout():
     return user_controller.logout()
 
-@app.route('/predictBeras',methods=['GET'])
+@app.route('/predict', methods=['GET'])
 @cache.cached(timeout=None)
-def predictBeras():
-    return time_series.predictBeras()
-
-@app.route('/predictCabaiMerah', methods=['GET'])
-@cache.cached(timeout=None)
-def predictCabaiMerah():
-    return time_series.predictCabaiMerah()
-
-@app.route('/predictBawangMerah',methods=['GET'])
-@cache.cached(timeout=None)
-def predictBawangMerah():
-    return time_series.predictBawangMerah()
-
-@app.route('/predictBawangPutih',methods=['GET'])
-@cache.cached(timeout=None)
-def predictBawangPutih():
-    return time_series.predictBawangPutih()
+def predict():
+    return time_series.predict()
 
 @app.route('/classification', methods=['GET'])
 def classification():
