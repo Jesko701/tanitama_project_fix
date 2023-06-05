@@ -103,14 +103,14 @@ def predictBawangMerah():
 def predictBawangPutih():
     return time_series.predictBawangPutih()
 
-@app.route('/classification', methods=['POST'])
-@cache.cached(timeout=None)
+@app.route('/classification', methods=['GET'])
 def classification():
     try:
-        image_text = request.form.get('text-image')
+        # 2 step enconde from base64 and then url-encode
+        image_text = request.args.get('text-image')
         return klasifikasi.predict_img(image_text)
     except Exception as e:
-        return jsonify(message = str(e))
+        return jsonify(message = "ukuran harus 150 x 150"),400
 
 
 if __name__ == "__main__":
