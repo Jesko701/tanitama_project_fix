@@ -1,9 +1,4 @@
 flask
-PyJWT
-Flask-SQLAlchemy
-python-dotenv
-mysqlclient
-wheel
 requests
 tensorflow
 scikit-learn
