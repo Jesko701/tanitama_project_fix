@@ -7,7 +7,7 @@ from controller.Authorization import required_token  # * no Class
 import requests, json, urllib.request
 from flask_caching import Cache
 import os
-
+from urllib.parse import quote
 
 load_dotenv()
 
@@ -93,13 +93,13 @@ def classification():
     try:
         # 2 step enconde from base64 and then url-encode
         image_text = request.args.get('text-image')
-        url = "http://34.101.175.4:8080/classification?text-image={}".format(image_text)
+        url ='http://34.101.175.4:8080/classification?text-image={}'.format(quote(image_text + '%2'))
         response = urllib.request.urlopen(url)
         data = response.read()
         dict_1 = json.loads(data)
         return dict_1
     except Exception as e:
-        return jsonify(message = "ukuran harus 150 x 150"),400
+        return jsonify(message = str(e)),400
 
 
 if __name__ == "__main__":
