@@ -2,9 +2,9 @@
 from flask import Flask, jsonify, request
 from ML.TimeSeries import TimeSeries
 from ML.Classification import Classification
-import requests
 from flask_caching import Cache
-import os
+import base64, io
+from PIL import Image
 
 
 app = Flask(__name__)
@@ -18,17 +18,29 @@ klasifikasi = Classification()
 def predict():
     return time_series.predict()
 
-@app.route('/classification', methods=['GET'])
+@app.route('/classification', methods=['POST'])
 def classification():
     try:
-        # 2 step enconde from base64 and then url-encode
-        image_text = request.args.get('text-image')
-        return klasifikasi.predict_img(image_text)
+        # 2 step from resizing to encode to b64
+        file_data = request.files['image-file']
+        if file_data:
+            #change the size of the file to 150x150
+            image = Image.open(file_data)
+            resize_image = image.resize((150,150))
+            buffer = io.BytesIO()
+            resize_image.save(buffer, format='JPEG')
+
+            #encode the image file to base64
+            buffer.seek(0)
+            image_encoded_string = base64.b64encode(buffer.read()).decode('utf-8')
+            return klasifikasi.predict_img(image_encoded_string)
+        return jsonify(message='Tidak ada file yang diupload')
+        # return klasifikasi.predict_img(my_image)
     except Exception as e:
-        return jsonify(message = "ukuran harus 150 x 150"),400
+        return jsonify(message = str(e)),400
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port='8080', debug='True')
+    app.run(host="0.0.0.0", port='8001', debug='True')
 else:
     print("Tidak bisa menjalankan program ini")
