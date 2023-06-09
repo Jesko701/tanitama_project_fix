@@ -90,11 +90,12 @@ def predict():
 @app.route('/classification', methods=['POST'])
 def classification():
     try:
-        # 2 step enconde from base64 and then url-encode
-        file_image = request.file['image-file']
+        file_image = request.files['file']
+        # preparing the file payload
+        image_file_payload = {'file': (file_image.filename, file_image.stream, file_image.content_type)}
         url ='http://34.101.175.4:8080/classification'
-        response = requests.post(url, file_image)
-        return response
+        response = requests.post(url, files=image_file_payload)
+        return jsonify(response.json()), response.status_code
     except Exception as e:
         return jsonify(message = str(e)),400
 
