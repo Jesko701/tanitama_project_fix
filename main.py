@@ -22,7 +22,7 @@ def predict():
 def classification():
     try:
         # 2 step from resizing to encode to b64
-        file_data = request.files['image-file']
+        file_data = request.files['file']
         if file_data:
             #change the size of the file to 150x150
             image = Image.open(file_data)
@@ -41,6 +41,6 @@ def classification():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port='8080', debug='True')
+    app.run(host="0.0.0.0", port='8000', debug='True')
 else:
     print("Tidak bisa menjalankan program ini")
