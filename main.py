@@ -7,7 +7,6 @@ from controller.Authorization import required_token  # * no Class
 import requests, json, urllib.request
 from flask_caching import Cache
 import os
-from urllib.parse import quote
 
 load_dotenv()
 
@@ -88,16 +87,14 @@ def predict():
     dict_1 = json.loads(data)
     return dict_1
 
-@app.route('/classification', methods=['GET'])
+@app.route('/classification', methods=['POST'])
 def classification():
     try:
         # 2 step enconde from base64 and then url-encode
-        image_text = request.args.get('text-image')
-        url ='http://34.101.175.4:8080/classification?text-image={}'.format(quote(image_text + '%2'))
-        response = urllib.request.urlopen(url)
-        data = response.read()
-        dict_1 = json.loads(data)
-        return dict_1
+        file_image = request.file['image-file']
+        url ='http://34.101.175.4:8080/classification'
+        response = requests.post(url, file_image)
+        return response
     except Exception as e:
         return jsonify(message = str(e)),400
 
