@@ -87,6 +87,15 @@ def predict():
     dict_1 = json.loads(data)
     return dict_1
 
+@app.route('/multiPredict', methods=['GET'])
+@cache.cached(timeout=None)
+def multiPredict():
+    url = "http://34.101.175.4:8080/listPredict"
+    response = urllib.request.urlopen(url)
+    data = response.read()
+    dict_1 = json.loads(data)
+    return dict_1
+
 @app.route('/classification', methods=['POST'])
 def classification():
     try:
