@@ -18,6 +18,15 @@ klasifikasi = Classification()
 def predict():
     return time_series.predict()
 
+@app.route('/listPredict', methods=['GET'])
+@cache.cached(timeout=None)
+def listPredict():
+    try:
+        return time_series.predictMultivariative()
+    except Exception as e:
+        return jsonify(message=str(e)),400
+
+
 @app.route('/classification', methods=['POST'])
 def classification():
     try:
