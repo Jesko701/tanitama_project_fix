@@ -14,7 +14,7 @@ import functools
 
 class Classification():
     path_folder = 'ML/static'
-    file_name = 'klasifikasi.h5'
+    file_name = 'klasifikasi_new.h5'
     model = load_model(os.path.join(path_folder,file_name))
     # define function prediction
     @functools.lru_cache()

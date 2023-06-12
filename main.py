@@ -35,7 +35,7 @@ def classification():
         if file_data:
             #change the size of the file to 150x150
             image = Image.open(file_data)
-            resize_image = image.resize((150,150))
+            resize_image = image.resize((224,224))
             buffer = io.BytesIO()
             resize_image.save(buffer, format='JPEG')
 
@@ -50,6 +50,6 @@ def classification():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port='8080', debug='True')
+    app.run(host="0.0.0.0", port='8000', debug='True')
 else:
     print("Tidak bisa menjalankan program ini")
