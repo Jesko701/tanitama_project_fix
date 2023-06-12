@@ -23,14 +23,12 @@ def helloWL():
     return jsonify(message="Hello World")
 
 @app.route('/users', methods=['GET'])
-@required_token
 @cache.cached(timeout=None)
 def get_all_users():
     return user_controller.getAll()
 
 
 @app.route('/profile', methods=['GET'])
-@required_token
 @cache.cached(timeout=None)
 def getUser():
     header = request.headers.get('Authorization')
@@ -41,7 +39,6 @@ def getUser():
 
 
 @app.route('/weather', methods=['GET'])
-@required_token
 @cache.cached(timeout=None)
 def weatherAPI():
     try:
@@ -74,7 +71,6 @@ def login():
 
 @app.route('/logoutPerson', methods=['POST'])
 @cache.cached(timeout=None)
-@required_token
 def logout():
     return user_controller.logout()
 
